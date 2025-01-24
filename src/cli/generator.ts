@@ -26,9 +26,14 @@ export function generateJSON(json: string, outputFile: string): void {
 }
 
 export function generateCpp(model: Model, outputFile: string): void {
-    let body : string = indent(4, `std::cout << "Hello, world!" << std::endl;`);
+    let body : string = indent(4, display("Hello, world!"));
     let output : string = generateCppMain(body);
     fs.writeFileSync(outputFile, output);
+}
+
+function display(text: string)
+{
+    return `std::cout << "${text}" << std::endl;`
 }
 
 function indent(indentationLevel : number = 0, line : string = "") : string {
