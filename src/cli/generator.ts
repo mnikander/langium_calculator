@@ -26,21 +26,37 @@ export function generateJSON(json: string, outputFile: string): void {
 }
 
 export function generateCpp(model: Model, outputFile: string): void {
-    let output : string = generateCppMain();
+    let body : string = indent(4, `std::cout << "Hello, world!" << std::endl;`);
+    let output : string = generateCppMain(body);
     fs.writeFileSync(outputFile, output);
 }
 
-function generateCppMain(): string {
-    let includes : string =
-`#include <cstdlib>
+function indent(indentationLevel : number = 0, line : string = "") : string {
+    let prefix : string = "";
+    for (let i : number = 0; i<indentationLevel; i++)
+    {
+        prefix += " ";
+    }
+    return prefix + line;
+}
+
+function generateCppMain(body : string = ""): string {
+    return preamble() + body + postamble();
+}
+
+function preamble() : string {
+    return `#include <cstdlib>
 #include <iostream>
 #include <functional>
 
 int main()
 {
+`;
+}
+
+function postamble() : string {
+    return `
     return EXIT_SUCCESS;
 }
 `;
-
-    return includes;
 }
