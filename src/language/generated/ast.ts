@@ -4,41 +4,54 @@
  ******************************************************************************/
 
 /* eslint-disable */
-import type { AstNode, Reference, ReferenceInfo, TypeMetaData } from 'langium';
+import type { AstNode, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const CalculatorTerminals = {
     WS: /\s+/,
-    ID: /[_a-zA-Z][\w_]*/,
-    ML_COMMENT: /\/\*[\s\S]*?\*\//,
-    SL_COMMENT: /\/\/[^\n\r]*/,
+    INT: /[0-9]+/,
+    SL_COMMENT: /\#[^\n\r]*/,
 };
 
 export type CalculatorTerminalNames = keyof typeof CalculatorTerminals;
 
 export type CalculatorKeywordNames = 
-    | "!"
-    | "Hello"
-    | "person";
+    | "("
+    | ")"
+    | "+"
+    | "-";
 
 export type CalculatorTokenNames = CalculatorTerminalNames | CalculatorKeywordNames;
 
-export interface Greeting extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'Greeting';
-    person: Reference<Person>;
+export interface Expression extends AstNode {
+    readonly $container: Expression | Model;
+    readonly $type: 'Expression';
+    arguments: Array<Expression>;
+    binary_operator?: '+' | '-';
+    value?: Integer;
 }
 
-export const Greeting = 'Greeting';
+export const Expression = 'Expression';
 
-export function isGreeting(item: unknown): item is Greeting {
-    return reflection.isInstance(item, Greeting);
+export function isExpression(item: unknown): item is Expression {
+    return reflection.isInstance(item, Expression);
+}
+
+export interface Integer extends AstNode {
+    readonly $container: Expression;
+    readonly $type: 'Integer';
+    value: number;
+}
+
+export const Integer = 'Integer';
+
+export function isInteger(item: unknown): item is Integer {
+    return reflection.isInstance(item, Integer);
 }
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    greetings: Array<Greeting>;
-    persons: Array<Person>;
+    expressions: Array<Expression>;
 }
 
 export const Model = 'Model';
@@ -47,28 +60,16 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
-export interface Person extends AstNode {
-    readonly $container: Model;
-    readonly $type: 'Person';
-    name: string;
-}
-
-export const Person = 'Person';
-
-export function isPerson(item: unknown): item is Person {
-    return reflection.isInstance(item, Person);
-}
-
 export type CalculatorAstType = {
-    Greeting: Greeting
+    Expression: Expression
+    Integer: Integer
     Model: Model
-    Person: Person
 }
 
 export class CalculatorAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Greeting, Model, Person];
+        return [Expression, Integer, Model];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -82,9 +83,6 @@ export class CalculatorAstReflection extends AbstractAstReflection {
     getReferenceType(refInfo: ReferenceInfo): string {
         const referenceId = `${refInfo.container.$type}:${refInfo.property}`;
         switch (referenceId) {
-            case 'Greeting:person': {
-                return Person;
-            }
             default: {
                 throw new Error(`${referenceId} is not a valid reference id.`);
             }
@@ -93,11 +91,21 @@ export class CalculatorAstReflection extends AbstractAstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case Greeting: {
+            case Expression: {
                 return {
-                    name: Greeting,
+                    name: Expression,
                     properties: [
-                        { name: 'person' }
+                        { name: 'arguments', defaultValue: [] },
+                        { name: 'binary_operator' },
+                        { name: 'value' }
+                    ]
+                };
+            }
+            case Integer: {
+                return {
+                    name: Integer,
+                    properties: [
+                        { name: 'value' }
                     ]
                 };
             }
@@ -105,16 +113,7 @@ export class CalculatorAstReflection extends AbstractAstReflection {
                 return {
                     name: Model,
                     properties: [
-                        { name: 'greetings', defaultValue: [] },
-                        { name: 'persons', defaultValue: [] }
-                    ]
-                };
-            }
-            case Person: {
-                return {
-                    name: Person,
-                    properties: [
-                        { name: 'name' }
+                        { name: 'expressions', defaultValue: [] }
                     ]
                 };
             }

@@ -17,33 +17,16 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       "entry": true,
       "name": "Model",
       "definition": {
-        "$type": "Alternatives",
-        "elements": [
-          {
-            "$type": "Assignment",
-            "feature": "persons",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@1"
-              },
-              "arguments": []
-            }
+        "$type": "Assignment",
+        "feature": "expressions",
+        "operator": "+=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@1"
           },
-          {
-            "$type": "Assignment",
-            "feature": "greetings",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@2"
-              },
-              "arguments": []
-            }
-          }
-        ],
+          "arguments": []
+        },
         "cardinality": "*"
       },
       "definesHiddenTokens": false,
@@ -54,25 +37,76 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
     },
     {
       "$type": "ParserRule",
-      "name": "Person",
+      "name": "Expression",
       "definition": {
-        "$type": "Group",
+        "$type": "Alternatives",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "person"
-          },
-          {
             "$type": "Assignment",
-            "feature": "name",
+            "feature": "value",
             "operator": "=",
             "terminal": {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@4"
+                "$ref": "#/rules@2"
               },
               "arguments": []
             }
+          },
+          {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "("
+              },
+              {
+                "$type": "Assignment",
+                "feature": "binary_operator",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "Keyword",
+                      "value": "+"
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": "-"
+                    }
+                  ]
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@1"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@1"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ]
           }
         ]
       },
@@ -85,38 +119,18 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
     },
     {
       "$type": "ParserRule",
-      "name": "Greeting",
+      "name": "Integer",
       "definition": {
-        "$type": "Group",
-        "elements": [
-          {
-            "$type": "Keyword",
-            "value": "Hello"
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@5"
           },
-          {
-            "$type": "Assignment",
-            "feature": "person",
-            "operator": "=",
-            "terminal": {
-              "$type": "CrossReference",
-              "type": {
-                "$ref": "#/rules@1"
-              },
-              "terminal": {
-                "$type": "RuleCall",
-                "rule": {
-                  "$ref": "#/rules@4"
-                },
-                "arguments": []
-              },
-              "deprecatedSyntax": false
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": "!"
-          }
-        ]
+          "arguments": []
+        }
       },
       "definesHiddenTokens": false,
       "entry": false,
@@ -172,20 +186,10 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
     {
       "$type": "TerminalRule",
       "hidden": true,
-      "name": "ML_COMMENT",
-      "definition": {
-        "$type": "RegexToken",
-        "regex": "/\\\\/\\\\*[\\\\s\\\\S]*?\\\\*\\\\//"
-      },
-      "fragment": false
-    },
-    {
-      "$type": "TerminalRule",
-      "hidden": true,
       "name": "SL_COMMENT",
       "definition": {
         "$type": "RegexToken",
-        "regex": "/\\\\/\\\\/[^\\\\n\\\\r]*/"
+        "regex": "/\\\\#[^\\\\n\\\\r]*/"
       },
       "fragment": false
     }
