@@ -20,3 +20,7 @@ export function generateJavaScript(model: Model, filePath: string, destination: 
     // fs.writeFileSync(generatedFilePath, toString(fileNode));
     return generatedFilePath;
 }
+
+export function generateJSON(json: string, outputFile: string): void {
+    fs.writeFileSync(outputFile, json, 'utf-8');
+}

@@ -16,6 +16,21 @@
                 "color": "terminal.ansiGreen",
                 "id": "server-process"
             }
+        },
+        {
+            "label": "Example to JSON",
+            "command": "node bin/cli.js toJSON examples/example.calc out/generated.json",
+            "type": "shell",
+            "group": {
+                "kind": "none",
+                "isDefault": true
+            },
+            "detail": "Parse the example document and write the AST into a JSON file",
+            "icon": {
+                "color": "terminal.ansiGreen",
+                "id": "server-process"
+            },
+            "problemMatcher": []
         }
     ]
 }

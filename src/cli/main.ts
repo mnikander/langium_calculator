@@ -3,8 +3,8 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import { CalculatorLanguageMetaData } from '../language/generated/module.js';
 import { createCalculatorServices } from '../language/calculator-module.js';
-import { extractAstNode } from './cli-util.js';
-import { generateJavaScript } from './generator.js';
+import { extractAstNode, extractDocument } from './cli-util.js';
+import { generateJavaScript, generateJSON } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs/promises';
@@ -25,6 +25,23 @@ export type GenerateOptions = {
     destination?: string;
 }
 
+export const toJSON = async (inputFile: string, outputFile: string): Promise<void> => {
+    const services = createCalculatorServices(NodeFileSystem).Calculator;
+    const document = await extractDocument(inputFile, services);
+    const parseResult = document.parseResult;
+    if (parseResult.lexerErrors.length === 0 &&
+        parseResult.parserErrors.length === 0
+    ) {
+        console.log(chalk.green(`Parsed and validated ${inputFile} successfully!`));
+        const serializer = services.serializer.JsonSerializer;
+        const json = serializer.serialize(document.parseResult.value, { space: 4 });
+        generateJSON(json, outputFile);
+        console.log(chalk.green(`Wrote AST in JSON form to ${outputFile}.`));
+    } else {
+        console.log(chalk.red(`Failed to parse and validate ${inputFile}!`));
+    }
+};
+
 export default function(): void {
     const program = new Command();
 
@@ -37,6 +54,13 @@ export default function(): void {
         .option('-d, --destination <dir>', 'destination directory of generating')
         .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
         .action(generateAction);
+
+    program
+        .command('toJSON')
+        .argument('<inputFile>', `source file (possible file extensions: ${fileExtensions})`)
+        .argument('<outputFile>', 'destination file (JSON)')
+        .description('parses the input file and writes the AST to an output JSON file')
+        .action(toJSON);
 
     program.parse(process.argv);
 }
