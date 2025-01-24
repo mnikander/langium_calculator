@@ -1,10 +1,13 @@
 grammar Calculator
 
 entry Model:
-    (expressions+=Expression)*;
+    (expressions+=(Integer | Application))*;
 
-Expression:
-    value=Integer | ('(' binary_operator=('+' | '-') arguments+=Expression arguments+=Expression ')');
+Application:
+    ('(' operator=Binary arguments+=(Integer | Application) arguments+=(Integer | Application)')');
+
+terminal Binary:
+    ('+' | '-' | '*' | '/' | '%' | '^');
 
 Integer:
     value=INT;

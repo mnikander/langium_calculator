@@ -8,6 +8,7 @@ import type { AstNode, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const CalculatorTerminals = {
+    Binary: /(((((\+|-)|\*)|\/)|%)|\^)/,
     WS: /\s+/,
     INT: /[0-9]+/,
     SL_COMMENT: /\#[^\n\r]*/,
@@ -17,28 +18,25 @@ export type CalculatorTerminalNames = keyof typeof CalculatorTerminals;
 
 export type CalculatorKeywordNames = 
     | "("
-    | ")"
-    | "+"
-    | "-";
+    | ")";
 
 export type CalculatorTokenNames = CalculatorTerminalNames | CalculatorKeywordNames;
 
-export interface Expression extends AstNode {
-    readonly $container: Expression | Model;
-    readonly $type: 'Expression';
-    arguments: Array<Expression>;
-    binary_operator?: '+' | '-';
-    value?: Integer;
+export interface Application extends AstNode {
+    readonly $container: Application | Model;
+    readonly $type: 'Application';
+    arguments: Array<Application | Integer>;
+    operator: string;
 }
 
-export const Expression = 'Expression';
+export const Application = 'Application';
 
-export function isExpression(item: unknown): item is Expression {
-    return reflection.isInstance(item, Expression);
+export function isApplication(item: unknown): item is Application {
+    return reflection.isInstance(item, Application);
 }
 
 export interface Integer extends AstNode {
-    readonly $container: Expression;
+    readonly $container: Application | Model;
     readonly $type: 'Integer';
     value: number;
 }
@@ -51,7 +49,7 @@ export function isInteger(item: unknown): item is Integer {
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    expressions: Array<Expression>;
+    expressions: Array<Application | Integer>;
 }
 
 export const Model = 'Model';
@@ -61,7 +59,7 @@ export function isModel(item: unknown): item is Model {
 }
 
 export type CalculatorAstType = {
-    Expression: Expression
+    Application: Application
     Integer: Integer
     Model: Model
 }
@@ -69,7 +67,7 @@ export type CalculatorAstType = {
 export class CalculatorAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Expression, Integer, Model];
+        return [Application, Integer, Model];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -91,13 +89,12 @@ export class CalculatorAstReflection extends AbstractAstReflection {
 
     getTypeMetaData(type: string): TypeMetaData {
         switch (type) {
-            case Expression: {
+            case Application: {
                 return {
-                    name: Expression,
+                    name: Application,
                     properties: [
                         { name: 'arguments', defaultValue: [] },
-                        { name: 'binary_operator' },
-                        { name: 'value' }
+                        { name: 'operator' }
                     ]
                 };
             }

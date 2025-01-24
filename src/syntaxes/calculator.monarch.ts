@@ -4,12 +4,13 @@ export default {
         
     ],
     operators: [
-        '+','-'
+        
     ],
-    symbols: /\(|\)|\+|-/,
+    symbols: /\(|\)/,
 
     tokenizer: {
         initial: [
+            { regex: /(((((\+|-)|\*)|\/)|%)|\^)/, action: {"token":"Binary"} },
             { regex: /[_a-zA-Z][\w_]*/, action: {"token":"ID"} },
             { regex: /[0-9]+/, action: {"token":"number"} },
             { regex: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/, action: {"token":"string"} },

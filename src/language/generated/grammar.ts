@@ -21,11 +21,23 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
         "feature": "expressions",
         "operator": "+=",
         "terminal": {
-          "$type": "RuleCall",
-          "rule": {
-            "$ref": "#/rules@1"
-          },
-          "arguments": []
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@3"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@1"
+              },
+              "arguments": []
+            }
+          ]
         },
         "cardinality": "*"
       },
@@ -37,13 +49,17 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
     },
     {
       "$type": "ParserRule",
-      "name": "Expression",
+      "name": "Application",
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
           {
+            "$type": "Keyword",
+            "value": "("
+          },
+          {
             "$type": "Assignment",
-            "feature": "value",
+            "feature": "operator",
             "operator": "=",
             "terminal": {
               "$type": "RuleCall",
@@ -54,59 +70,56 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
             }
           },
           {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "("
-              },
-              {
-                "$type": "Assignment",
-                "feature": "binary_operator",
-                "operator": "=",
-                "terminal": {
-                  "$type": "Alternatives",
-                  "elements": [
-                    {
-                      "$type": "Keyword",
-                      "value": "+"
-                    },
-                    {
-                      "$type": "Keyword",
-                      "value": "-"
-                    }
-                  ]
-                }
-              },
-              {
-                "$type": "Assignment",
-                "feature": "arguments",
-                "operator": "+=",
-                "terminal": {
+            "$type": "Assignment",
+            "feature": "arguments",
+            "operator": "+=",
+            "terminal": {
+              "$type": "Alternatives",
+              "elements": [
+                {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@3"
+                  },
+                  "arguments": []
+                },
+                {
                   "$type": "RuleCall",
                   "rule": {
                     "$ref": "#/rules@1"
                   },
                   "arguments": []
                 }
-              },
-              {
-                "$type": "Assignment",
-                "feature": "arguments",
-                "operator": "+=",
-                "terminal": {
+              ]
+            }
+          },
+          {
+            "$type": "Assignment",
+            "feature": "arguments",
+            "operator": "+=",
+            "terminal": {
+              "$type": "Alternatives",
+              "elements": [
+                {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@3"
+                  },
+                  "arguments": []
+                },
+                {
                   "$type": "RuleCall",
                   "rule": {
                     "$ref": "#/rules@1"
                   },
                   "arguments": []
                 }
-              },
-              {
-                "$type": "Keyword",
-                "value": ")"
-              }
-            ]
+              ]
+            }
+          },
+          {
+            "$type": "Keyword",
+            "value": ")"
           }
         ]
       },
@@ -118,6 +131,79 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       "wildcard": false
     },
     {
+      "$type": "TerminalRule",
+      "name": "Binary",
+      "definition": {
+        "$type": "TerminalAlternatives",
+        "elements": [
+          {
+            "$type": "TerminalAlternatives",
+            "elements": [
+              {
+                "$type": "TerminalAlternatives",
+                "elements": [
+                  {
+                    "$type": "TerminalAlternatives",
+                    "elements": [
+                      {
+                        "$type": "TerminalAlternatives",
+                        "elements": [
+                          {
+                            "$type": "CharacterRange",
+                            "left": {
+                              "$type": "Keyword",
+                              "value": "+"
+                            }
+                          },
+                          {
+                            "$type": "CharacterRange",
+                            "left": {
+                              "$type": "Keyword",
+                              "value": "-"
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "$type": "CharacterRange",
+                        "left": {
+                          "$type": "Keyword",
+                          "value": "*"
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "$type": "CharacterRange",
+                    "left": {
+                      "$type": "Keyword",
+                      "value": "/"
+                    }
+                  }
+                ]
+              },
+              {
+                "$type": "CharacterRange",
+                "left": {
+                  "$type": "Keyword",
+                  "value": "%"
+                }
+              }
+            ]
+          },
+          {
+            "$type": "CharacterRange",
+            "left": {
+              "$type": "Keyword",
+              "value": "^"
+            }
+          }
+        ]
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
       "$type": "ParserRule",
       "name": "Integer",
       "definition": {
@@ -127,7 +213,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@5"
+            "$ref": "#/rules@6"
           },
           "arguments": []
         }
