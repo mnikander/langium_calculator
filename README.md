@@ -10,3 +10,9 @@ For example, the equation 1+2*3 would be expressed as: `(+ 1 (* 2 3))`.
 3. Build using the task in vscode (or execute `npm run langium:generate && npm run build` in a terminal)
 4. Run the resulting program in vscode, to start a new vscode window which has the extension for 'Calculator' loaded
 5. In this new vscode window, open a .calc file in the example/ directory to try out syntax highlighting and auto-completion
+
+## Compile and run the entire pipeline
+
+```bash
+npm run langium:generate && npm run build && node bin/cli.js toJSON examples/example.calc out/generated.json && node bin/cli.js toCPP examples/example.calc out/generated.cpp && g++ -o out/generated out/generated.cpp && ./out/generated
+```
