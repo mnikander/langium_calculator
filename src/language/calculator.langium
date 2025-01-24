@@ -1,16 +1,13 @@
 grammar Calculator
 
 entry Model:
-    (expressions+=(Integer | Application))*;
+    (expressions+=(INT | Application))*;
 
 Application:
-    ('(' operator=Binary arguments+=(Integer | Application) arguments+=(Integer | Application)')');
+    ('(' operator=Binary arguments+=(INT | Application) arguments+=(INT | Application)')');
 
 terminal Binary:
     ('+' | '-' | '*' | '/' | '%' | '^');
-
-Integer:
-    value=INT;
 
 hidden terminal WS: /\s+/;
 terminal ID: /[_a-zA-Z][\w_]*/;

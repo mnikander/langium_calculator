@@ -25,7 +25,7 @@ export type CalculatorTokenNames = CalculatorTerminalNames | CalculatorKeywordNa
 export interface Application extends AstNode {
     readonly $container: Application | Model;
     readonly $type: 'Application';
-    arguments: Array<Application | Integer>;
+    arguments: Array<Application | number>;
     operator: string;
 }
 
@@ -35,21 +35,9 @@ export function isApplication(item: unknown): item is Application {
     return reflection.isInstance(item, Application);
 }
 
-export interface Integer extends AstNode {
-    readonly $container: Application | Model;
-    readonly $type: 'Integer';
-    value: number;
-}
-
-export const Integer = 'Integer';
-
-export function isInteger(item: unknown): item is Integer {
-    return reflection.isInstance(item, Integer);
-}
-
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    expressions: Array<Application | Integer>;
+    expressions: Array<Application | number>;
 }
 
 export const Model = 'Model';
@@ -60,14 +48,13 @@ export function isModel(item: unknown): item is Model {
 
 export type CalculatorAstType = {
     Application: Application
-    Integer: Integer
     Model: Model
 }
 
 export class CalculatorAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Application, Integer, Model];
+        return [Application, Model];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -95,14 +82,6 @@ export class CalculatorAstReflection extends AbstractAstReflection {
                     properties: [
                         { name: 'arguments', defaultValue: [] },
                         { name: 'operator' }
-                    ]
-                };
-            }
-            case Integer: {
-                return {
-                    name: Integer,
-                    properties: [
-                        { name: 'value' }
                     ]
                 };
             }
