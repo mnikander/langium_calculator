@@ -26,7 +26,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@5"
+                "$ref": "#/rules@3"
               },
               "arguments": []
             },
@@ -79,7 +79,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@5"
+                    "$ref": "#/rules@3"
                   },
                   "arguments": []
                 },
@@ -103,7 +103,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
                 {
                   "$type": "RuleCall",
                   "rule": {
-                    "$ref": "#/rules@5"
+                    "$ref": "#/rules@3"
                   },
                   "arguments": []
                 },
@@ -202,6 +202,28 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       },
       "fragment": false,
       "hidden": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Integer",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@6"
+          },
+          "arguments": []
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     },
     {
       "$type": "TerminalRule",
