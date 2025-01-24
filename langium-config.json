@@ -1,0 +1,15 @@
+{
+    "projectName": "Calculator",
+    "languages": [{
+        "id": "calculator",
+        "grammar": "src/language/calculator.langium",
+        "fileExtensions": [".calc"],
+        "textMate": {
+            "out": "syntaxes/calculator.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "src/syntaxes/calculator.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
