@@ -24,3 +24,23 @@ export function generateJavaScript(model: Model, filePath: string, destination: 
 export function generateJSON(json: string, outputFile: string): void {
     fs.writeFileSync(outputFile, json, 'utf-8');
 }
+
+export function generateCpp(model: Model, outputFile: string): void {
+    let output : string = generateCppMain();
+    fs.writeFileSync(outputFile, output);
+}
+
+function generateCppMain(): string {
+    let includes : string =
+`#include <cstdlib>
+#include <iostream>
+#include <functional>
+
+int main()
+{
+    return EXIT_SUCCESS;
+}
+`;
+
+    return includes;
+}

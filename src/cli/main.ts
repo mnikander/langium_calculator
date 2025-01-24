@@ -4,7 +4,7 @@ import { Command } from 'commander';
 import { CalculatorLanguageMetaData } from '../language/generated/module.js';
 import { createCalculatorServices } from '../language/calculator-module.js';
 import { extractAstNode, extractDocument } from './cli-util.js';
-import { generateJavaScript, generateJSON } from './generator.js';
+import { generateCpp, generateJavaScript, generateJSON } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 import * as url from 'node:url';
 import * as fs from 'node:fs/promises';
@@ -42,6 +42,22 @@ export const toJSON = async (inputFile: string, outputFile: string): Promise<voi
     }
 };
 
+export const toCPP = async (inputFile: string, outputFile: string): Promise<void> => {
+    const services = createCalculatorServices(NodeFileSystem).Calculator;
+    const document = await extractDocument(inputFile, services);
+    const model = document.parseResult?.value as Model;
+    const parseResult = document.parseResult;
+    if (parseResult.lexerErrors.length === 0 &&
+        parseResult.parserErrors.length === 0
+    ) {
+        console.log(chalk.green(`Parsed and validated ${inputFile} successfully!`));
+        generateCpp(model, outputFile);
+        console.log(chalk.green(`Wrote C++ code to ${outputFile}.`));
+    } else {
+        console.log(chalk.red(`Failed to parse and validate ${inputFile}!`));
+    }
+};
+
 export default function(): void {
     const program = new Command();
 
@@ -61,6 +77,13 @@ export default function(): void {
         .argument('<outputFile>', 'destination file (JSON)')
         .description('parses the input file and writes the AST to an output JSON file')
         .action(toJSON);
+
+    program
+        .command('toCPP')
+        .argument('<inputFile>', `source file (possible file extensions: ${fileExtensions})`)
+        .argument('<outputFile>', 'destination file (CPP)')
+        .description('parses the input file, transpiles to C++, and writes it to a .cpp file')
+        .action(toCPP);
 
     program.parse(process.argv);
 }
