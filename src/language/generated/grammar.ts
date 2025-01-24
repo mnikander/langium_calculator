@@ -26,7 +26,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
             {
               "$type": "RuleCall",
               "rule": {
-                "$ref": "#/rules@3"
+                "$ref": "#/rules@4"
               },
               "arguments": []
             },
@@ -51,75 +51,129 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       "$type": "ParserRule",
       "name": "Application",
       "definition": {
-        "$type": "Group",
+        "$type": "Alternatives",
         "elements": [
           {
-            "$type": "Keyword",
-            "value": "("
-          },
-          {
-            "$type": "Assignment",
-            "feature": "operator",
-            "operator": "=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@2"
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "("
               },
-              "arguments": []
-            }
+              {
+                "$type": "Assignment",
+                "feature": "operator",
+                "operator": "=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@2"
+                  },
+                  "arguments": []
+                }
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@1"
+                      },
+                      "arguments": []
+                    }
+                  ]
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ]
           },
           {
-            "$type": "Assignment",
-            "feature": "arguments",
-            "operator": "+=",
-            "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
+            "$type": "Group",
+            "elements": [
+              {
+                "$type": "Keyword",
+                "value": "("
+              },
+              {
+                "$type": "Assignment",
+                "feature": "operator",
+                "operator": "=",
+                "terminal": {
                   "$type": "RuleCall",
                   "rule": {
                     "$ref": "#/rules@3"
                   },
                   "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@1"
-                  },
-                  "arguments": []
                 }
-              ]
-            }
-          },
-          {
-            "$type": "Assignment",
-            "feature": "arguments",
-            "operator": "+=",
-            "terminal": {
-              "$type": "Alternatives",
-              "elements": [
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@3"
-                  },
-                  "arguments": []
-                },
-                {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@1"
-                  },
-                  "arguments": []
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@1"
+                      },
+                      "arguments": []
+                    }
+                  ]
                 }
-              ]
-            }
-          },
-          {
-            "$type": "Keyword",
-            "value": ")"
+              },
+              {
+                "$type": "Assignment",
+                "feature": "arguments",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@1"
+                      },
+                      "arguments": []
+                    }
+                  ]
+                }
+              },
+              {
+                "$type": "Keyword",
+                "value": ")"
+              }
+            ]
           }
         ]
       },
@@ -131,77 +185,67 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       "wildcard": false
     },
     {
-      "$type": "TerminalRule",
+      "$type": "ParserRule",
+      "name": "Unary",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "Keyword",
+          "value": "sqrt"
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
       "name": "Binary",
       "definition": {
-        "$type": "TerminalAlternatives",
-        "elements": [
-          {
-            "$type": "TerminalAlternatives",
-            "elements": [
-              {
-                "$type": "TerminalAlternatives",
-                "elements": [
-                  {
-                    "$type": "TerminalAlternatives",
-                    "elements": [
-                      {
-                        "$type": "TerminalAlternatives",
-                        "elements": [
-                          {
-                            "$type": "CharacterRange",
-                            "left": {
-                              "$type": "Keyword",
-                              "value": "+"
-                            }
-                          },
-                          {
-                            "$type": "CharacterRange",
-                            "left": {
-                              "$type": "Keyword",
-                              "value": "-"
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "$type": "CharacterRange",
-                        "left": {
-                          "$type": "Keyword",
-                          "value": "*"
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "$type": "CharacterRange",
-                    "left": {
-                      "$type": "Keyword",
-                      "value": "/"
-                    }
-                  }
-                ]
-              },
-              {
-                "$type": "CharacterRange",
-                "left": {
-                  "$type": "Keyword",
-                  "value": "%"
-                }
-              }
-            ]
-          },
-          {
-            "$type": "CharacterRange",
-            "left": {
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "Alternatives",
+          "elements": [
+            {
+              "$type": "Keyword",
+              "value": "+"
+            },
+            {
+              "$type": "Keyword",
+              "value": "-"
+            },
+            {
+              "$type": "Keyword",
+              "value": "*"
+            },
+            {
+              "$type": "Keyword",
+              "value": "/"
+            },
+            {
+              "$type": "Keyword",
+              "value": "%"
+            },
+            {
               "$type": "Keyword",
               "value": "^"
             }
-          }
-        ]
+          ]
+        }
       },
+      "definesHiddenTokens": false,
+      "entry": false,
       "fragment": false,
-      "hidden": false
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
     },
     {
       "$type": "ParserRule",
@@ -213,7 +257,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@6"
+            "$ref": "#/rules@7"
           },
           "arguments": []
         }

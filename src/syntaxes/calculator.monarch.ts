@@ -1,17 +1,16 @@
 // Monarch syntax highlighting for the calculator language.
 export default {
     keywords: [
-        
+        'sqrt'
     ],
     operators: [
-        
+        '%','*','+','-','/','^'
     ],
-    symbols: /\(|\)/,
+    symbols: /%|\(|\)|\*|\+|-|\/|\^/,
 
     tokenizer: {
         initial: [
-            { regex: /(((((\+|-)|\*)|\/)|%)|\^)/, action: {"token":"Binary"} },
-            { regex: /[_a-zA-Z][\w_]*/, action: {"token":"ID"} },
+            { regex: /[_a-zA-Z][\w_]*/, action: { cases: { '@keywords': {"token":"keyword"}, '@default': {"token":"ID"} }} },
             { regex: /[0-9]+/, action: {"token":"number"} },
             { regex: /"(\\.|[^"\\])*"|'(\\.|[^'\\])*'/, action: {"token":"string"} },
             { include: '@whitespace' },

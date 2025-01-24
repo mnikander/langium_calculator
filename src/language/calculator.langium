@@ -4,10 +4,14 @@ entry Model:
     (expressions+=(Integer | Application))*;
 
 Application:
+    ('(' operator=Unary arguments+=(Integer | Application) ')') |
     ('(' operator=Binary arguments+=(Integer | Application) arguments+=(Integer | Application)')');
 
-terminal Binary:
-    ('+' | '-' | '*' | '/' | '%' | '^');
+Unary:
+    value='sqrt';
+
+Binary:
+    value=('+' | '-' | '*' | '/' | '%' | '^');
 
 Integer:
     value=INT;

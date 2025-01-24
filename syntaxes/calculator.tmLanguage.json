@@ -10,7 +10,7 @@
     },
     {
       "name": "keyword.control.calculator",
-      "match": ""
+      "match": "\\b(sqrt)\\b"
     },
     {
       "name": "string.quoted.double.calculator",

@@ -8,7 +8,6 @@ import type { AstNode, ReferenceInfo, TypeMetaData } from 'langium';
 import { AbstractAstReflection } from 'langium';
 
 export const CalculatorTerminals = {
-    Binary: /(((((\+|-)|\*)|\/)|%)|\^)/,
     WS: /\s+/,
     INT: /[0-9]+/,
     SL_COMMENT: /\#[^\n\r]*/,
@@ -17,8 +16,15 @@ export const CalculatorTerminals = {
 export type CalculatorTerminalNames = keyof typeof CalculatorTerminals;
 
 export type CalculatorKeywordNames = 
+    | "%"
     | "("
-    | ")";
+    | ")"
+    | "*"
+    | "+"
+    | "-"
+    | "/"
+    | "^"
+    | "sqrt";
 
 export type CalculatorTokenNames = CalculatorTerminalNames | CalculatorKeywordNames;
 
@@ -26,13 +32,25 @@ export interface Application extends AstNode {
     readonly $container: Application | Model;
     readonly $type: 'Application';
     arguments: Array<Application | Integer>;
-    operator: string;
+    operator: Binary | Unary;
 }
 
 export const Application = 'Application';
 
 export function isApplication(item: unknown): item is Application {
     return reflection.isInstance(item, Application);
+}
+
+export interface Binary extends AstNode {
+    readonly $container: Application;
+    readonly $type: 'Binary';
+    value: '%' | '*' | '+' | '-' | '/' | '^';
+}
+
+export const Binary = 'Binary';
+
+export function isBinary(item: unknown): item is Binary {
+    return reflection.isInstance(item, Binary);
 }
 
 export interface Integer extends AstNode {
@@ -58,16 +76,30 @@ export function isModel(item: unknown): item is Model {
     return reflection.isInstance(item, Model);
 }
 
+export interface Unary extends AstNode {
+    readonly $container: Application;
+    readonly $type: 'Unary';
+    value: 'sqrt';
+}
+
+export const Unary = 'Unary';
+
+export function isUnary(item: unknown): item is Unary {
+    return reflection.isInstance(item, Unary);
+}
+
 export type CalculatorAstType = {
     Application: Application
+    Binary: Binary
     Integer: Integer
     Model: Model
+    Unary: Unary
 }
 
 export class CalculatorAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Application, Integer, Model];
+        return [Application, Binary, Integer, Model, Unary];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -98,6 +130,14 @@ export class CalculatorAstReflection extends AbstractAstReflection {
                     ]
                 };
             }
+            case Binary: {
+                return {
+                    name: Binary,
+                    properties: [
+                        { name: 'value' }
+                    ]
+                };
+            }
             case Integer: {
                 return {
                     name: Integer,
@@ -111,6 +151,14 @@ export class CalculatorAstReflection extends AbstractAstReflection {
                     name: Model,
                     properties: [
                         { name: 'expressions', defaultValue: [] }
+                    ]
+                };
+            }
+            case Unary: {
+                return {
+                    name: Unary,
+                    properties: [
+                        { name: 'value' }
                     ]
                 };
             }
