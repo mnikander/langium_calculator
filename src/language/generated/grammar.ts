@@ -33,6 +33,13 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
             {
               "$type": "RuleCall",
               "rule": {
+                "$ref": "#/rules@5"
+              },
+              "arguments": []
+            },
+            {
+              "$type": "RuleCall",
+              "rule": {
                 "$ref": "#/rules@1"
               },
               "arguments": []
@@ -89,6 +96,13 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
                     {
                       "$type": "RuleCall",
                       "rule": {
+                        "$ref": "#/rules@5"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
                         "$ref": "#/rules@1"
                       },
                       "arguments": []
@@ -138,6 +152,13 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
                     {
                       "$type": "RuleCall",
                       "rule": {
+                        "$ref": "#/rules@5"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
                         "$ref": "#/rules@1"
                       },
                       "arguments": []
@@ -156,6 +177,13 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
                       "$type": "RuleCall",
                       "rule": {
                         "$ref": "#/rules@4"
+                      },
+                      "arguments": []
+                    },
+                    {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@5"
                       },
                       "arguments": []
                     },
@@ -257,7 +285,29 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
         "terminal": {
           "$type": "RuleCall",
           "rule": {
-            "$ref": "#/rules@7"
+            "$ref": "#/rules@9"
+          },
+          "arguments": []
+        }
+      },
+      "definesHiddenTokens": false,
+      "entry": false,
+      "fragment": false,
+      "hiddenTokens": [],
+      "parameters": [],
+      "wildcard": false
+    },
+    {
+      "$type": "ParserRule",
+      "name": "Float",
+      "definition": {
+        "$type": "Assignment",
+        "feature": "value",
+        "operator": "=",
+        "terminal": {
+          "$type": "RuleCall",
+          "rule": {
+            "$ref": "#/rules@8"
           },
           "arguments": []
         }
@@ -291,6 +341,20 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
     },
     {
       "$type": "TerminalRule",
+      "name": "FLOAT",
+      "type": {
+        "$type": "ReturnType",
+        "name": "number"
+      },
+      "definition": {
+        "$type": "RegexToken",
+        "regex": "/[-+]?((\\\\d+\\\\.\\\\d*)|(\\\\d*\\\\.\\\\d+))/"
+      },
+      "fragment": false,
+      "hidden": false
+    },
+    {
+      "$type": "TerminalRule",
       "name": "INT",
       "type": {
         "$type": "ReturnType",
@@ -298,7 +362,7 @@ export const CalculatorGrammar = (): Grammar => loadedCalculatorGrammar ?? (load
       },
       "definition": {
         "$type": "RegexToken",
-        "regex": "/[0-9]+/"
+        "regex": "/[-+]?[0-9]+/"
       },
       "fragment": false,
       "hidden": false

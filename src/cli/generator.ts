@@ -1,4 +1,4 @@
-import type { Application, Integer, Model } from '../language/generated/ast.js';
+import type { Application, Integer, Float, Model } from '../language/generated/ast.js';
 // import { expandToNode, joinToNode, toString } from 'langium/generate';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
@@ -56,10 +56,10 @@ function expressions(model: Model): string {
     return body;
 }
 
-function generateExpression(node: Integer | Application): string {
+function generateExpression(node: Integer | Float | Application): string {
     let body: string = "";
-    if(node.$type == "Integer") {
-        body += generateInteger(node);
+    if(node.$type == "Integer" || node.$type == "Float") {
+        body += generateNumber(node);
     }
     else if(node.$type == "Application") {
         body += generateApplication(node);
@@ -69,7 +69,7 @@ function generateExpression(node: Integer | Application): string {
     return body;
 }
 
-function generateInteger(node: Integer): string {
+function generateNumber(node: Integer | Float): string {
     return node.value.toString();
 }
 

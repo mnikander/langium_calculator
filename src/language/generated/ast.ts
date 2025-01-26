@@ -9,7 +9,8 @@ import { AbstractAstReflection } from 'langium';
 
 export const CalculatorTerminals = {
     WS: /\s+/,
-    INT: /[0-9]+/,
+    FLOAT: /[-+]?((\d+\.\d*)|(\d*\.\d+))/,
+    INT: /[-+]?[0-9]+/,
     SL_COMMENT: /\#[^\n\r]*/,
 };
 
@@ -31,7 +32,7 @@ export type CalculatorTokenNames = CalculatorTerminalNames | CalculatorKeywordNa
 export interface Application extends AstNode {
     readonly $container: Application | Model;
     readonly $type: 'Application';
-    arguments: Array<Application | Integer>;
+    arguments: Array<Application | Float | Integer>;
     operator: Binary | Unary;
 }
 
@@ -53,6 +54,18 @@ export function isBinary(item: unknown): item is Binary {
     return reflection.isInstance(item, Binary);
 }
 
+export interface Float extends AstNode {
+    readonly $container: Application | Model;
+    readonly $type: 'Float';
+    value: number;
+}
+
+export const Float = 'Float';
+
+export function isFloat(item: unknown): item is Float {
+    return reflection.isInstance(item, Float);
+}
+
 export interface Integer extends AstNode {
     readonly $container: Application | Model;
     readonly $type: 'Integer';
@@ -67,7 +80,7 @@ export function isInteger(item: unknown): item is Integer {
 
 export interface Model extends AstNode {
     readonly $type: 'Model';
-    expressions: Array<Application | Integer>;
+    expressions: Array<Application | Float | Integer>;
 }
 
 export const Model = 'Model';
@@ -91,6 +104,7 @@ export function isUnary(item: unknown): item is Unary {
 export type CalculatorAstType = {
     Application: Application
     Binary: Binary
+    Float: Float
     Integer: Integer
     Model: Model
     Unary: Unary
@@ -99,7 +113,7 @@ export type CalculatorAstType = {
 export class CalculatorAstReflection extends AbstractAstReflection {
 
     getAllTypes(): string[] {
-        return [Application, Binary, Integer, Model, Unary];
+        return [Application, Binary, Float, Integer, Model, Unary];
     }
 
     protected override computeIsSubtype(subtype: string, supertype: string): boolean {
@@ -133,6 +147,14 @@ export class CalculatorAstReflection extends AbstractAstReflection {
             case Binary: {
                 return {
                     name: Binary,
+                    properties: [
+                        { name: 'value' }
+                    ]
+                };
+            }
+            case Float: {
+                return {
+                    name: Float,
                     properties: [
                         { name: 'value' }
                     ]
