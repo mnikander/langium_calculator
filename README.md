@@ -1,15 +1,15 @@
 # Calculator DSL
 
-This is a DSL which allows writing and evaluating basic arithmetic expressions in prefix-notation, i.e. Polish notation.
+This domain-specific language (DSL) allows writing and evaluating basic arithmetic expressions in prefix-notation, i.e. Polish notation.
 The equation `1+2*3` would be expressed as: `(+ 1 (* 2 3))`.
-Note that the parethesis make the order of execution explicit, so there is no order of precedence amongst functions.
+Note that the parethesis make the order of execution explicit, so there is no order-of-precedence amongst functions.
 
 ## How does the toolchain work?
 
 This project was built using [Langium](https://langium.org/), a language engineering tool.
 The grammar for the language is defined in _src/language/calculator.langium_.
 Langium uses this grammar definition to generate a tokenizer, parser, and VS code extension with syntax highlighting and auto-completion for the language.
-After everything has been generated, langium is able to parse expressions and create an abstract syntax tree for it.
+After everything has been generated, langium is able to parse a document written in the 'calculator language' and generate an abstract syntax tree for it.
 
 **An example document in the calculator language:**
 ```lisp
@@ -44,8 +44,8 @@ After everything has been generated, langium is able to parse expressions and cr
 ```
 
 To get executable code, the AST must be translated into a language which we can execute.
-The code for the generator can be found in _src/cli/generator.ts_.
-It takes an AST for any document which can be written in this calculator language and converts (transpiles) it to C++ code.
+The hand-written code generator can be found in _src/cli/generator.ts_.
+It takes any 'calculator AST' and converts (transpiles) it to the corresponding C++ code.
 
 **The generated C++ code:**
 
@@ -63,13 +63,15 @@ int main()
 ```
 
 The C++ code can then be compiled and executed to evaluate the calculator expressions.
-I chose C++ as because I know it well, and it's easier for me to debug that LLVM IR or WebAssembly for example.
-I opted to use the function objects from the functional header (instead of the inbuild `operator+`) to have a more consistent syntax accross different functions.
+C++ was chosen as the target language because it's fast and provides useful abstractions.
+This makes it easier to develop and debug the code generator, than if LLVM IR or WebAssembly was chosen as the target language.
+Function objects from the functional header were used, instead of the inbuild `operator+`, for example. 
+This maintains a more consistent syntax even with functions for which there are no inbuilt operators in C++.
 
-You could write generators for any language.
-A very attractive target language would be JavaScript, because then an IDE and the entire toolchain, including execution of the code, could be run inside the browser.
-The langauge could then be used just by visiting the right website.
-The IDE and execution environment would run locally on the client (in the browser) and not on the server, so hosting costs stay reasonable.
+Generators could be written for other languages as well.
+JavaScript is a very attractive target language because an IDE and the entire toolchain, including execution of the code, could be run inside the browser.
+The langauge could then be used by simply visiting the right website.
+The IDE and execution environment would run locally on the client (in the browser) and not on the server, which ensures the IDE is very responsive and hosting costs stay reasonable.
 For the time being, that approach was not chosen here though.
 
 ## Setup
